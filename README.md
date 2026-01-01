@@ -7,6 +7,14 @@ git remote set-url origin https://github.com/artem4444/FastAPI-for-Embedded-ROS2
 git push -u origin main
 ```
 
+# Steps
+- code fastapi listener
+-
+
+- use existing wsl2 ubuntu 22.04; ros2 build 
+- enter, pull gh repo to the wsl2
+- run the Node in ros2 humble with topic printing in terminal: topic echo
+
 
 # Transmitting data over internet
 transmitted data format:
@@ -157,3 +165,83 @@ point = JointTrajectoryPoint()
 point.positions = [0.5, 0.3, 0.1]
 trajectory.points = [point]
 ```
+
+
+# Topics 
+Topics with timers (regular reads) are the standard approach for real-time systems with defined frequencies in ROS2
+
+
+# Testing ROS2FastapiBridgeNode
+
+1. **Build and launch ROS2** (ensure ROS2 environment is set up)
+2. **Start the FastAPI server** (creates ROS2FastapiBridgeNode)
+3. **Connect via WLAN/HTTP** (send HTTP requests to FastAPI)
+4. **Echo the topic** (subscribe to see published messages)
+
+
+
+# Moveit2
+1. User/Application → MoveIt2
+   ↓
+2. MoveIt2 plans trajectory (collision-free path)
+   ↓
+3. MoveIt2 generates JointTrajectory message
+   ↓
+4. MoveIt2 → ROS2 Control (via FollowJointTrajectory action)
+   ↓
+5. ROS2 Control executes trajectory on hardware
+   ↓
+6. ROS2 Control reports status back to MoveIt2
+
+
+# Th. sending HTTP packets through Public Network
+Internet = The Global Network
+Public Network = A Network Using Public IPs
+
+http://203.0.113.45:8000/api/v1/health
+│    │              │    │
+│    │              │    └─ Path (route/endpoint)
+│    │              └────── Port
+│    └────────────────────── Host (IP address)
+└─────────────────────────── Protocol/Scheme
+
+
+[Client Device]
+    ↓ (HTTP Request)
+    User types URL: http://203.0.113.45:8000/api/v1/health
+    Browser creates HTTP request
+    OS wraps it in TCP/IP packet
+[Client's Router] (NAT: client private IP → client public IP)
+    ↓
+[Client's ISP]
+    ↓
+[Internet Backbone] (Multiple routers, BGP routing)
+    ↓
+[Your ISP]
+    ↓
+[Your Router - Public Side] (203.0.113.45:8000)
+    ↓ (Port Forwarding Rule)
+[Your Router - NAT Translation] (203.0.113.45:8000 → 192.168.1.100:8000)
+    ↓
+[Your Local Network] (ARP lookup, MAC address resolution)
+    ↓
+[Embedded Device Network Interface] (192.168.1.100:8000)
+    ↓
+[OS Network Stack] (Port 8000 → uvicorn process)
+    ↓
+[uvicorn HTTP Server]
+    ↓
+[FastAPI Application]
+    ↓
+[Endpoint Handler] (e.g., /api/v1/health)
+    ↓
+[ROS2 Bridge] (if needed)
+    ↓
+[HTTP Response Generated]
+    ↓ (Reverse path back to client)
+
+
+# Desktop Windows 11 - fastapi server running in wsl2 ubuntu22: sending HTTP packets through Public Network
+
+## Tailscale
+VPN tunnel; virtual LAN
