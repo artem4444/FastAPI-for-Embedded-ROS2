@@ -1,3 +1,13 @@
+access to github repo via https
+```bash
+# Change remote to HTTPS
+git remote set-url origin https://github.com/artem4444/FastAPI-for-Embedded-ROS2.git
+
+# Push (will prompt for credentials)
+git push -u origin main
+```
+
+
 # Transmitting data over internet
 transmitted data format:
 
@@ -33,11 +43,6 @@ pip install fastapi uvicorn
 
 # FastAPI Node
 Python FastAPI Node that receives high-level control data for Embedded ROS2 via WIFI/LTE 
-
-
-
-# Data Structuring for Moveit2
-
 
 
 
